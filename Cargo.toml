@@ -1,7 +1,12 @@
 [package]
-name = "learn_bevy"
+name = "kinematic_sandbox_2d"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+bevy = { version = "0.11.1", features = ["dynamic_linking"] }
+leafwing-input-manager = "0.10.0"
+bevy_xpbd_2d = "0.2.0"
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]
@@ -10,7 +15,3 @@ opt-level = 1
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
 opt-level = 3
-
-[dependencies]
-bevy = { version = "0.11.1", features = ["dynamic_linking"] }
-bevy_xpbd_2d = "0.2.0"

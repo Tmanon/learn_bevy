@@ -1,12 +1,10 @@
 use bevy::prelude::*;
 use bevy_xpbd_2d::prelude::*;
 
-pub const SCALE_FACTOR: f32 = 10.0;
-pub const ARENA_SIZE: Vec2 = Vec2::new(800.0, 600.0);
-pub const ARENA_WALL: f32 = 20.0;
+use crate::constants::*;
 
 #[derive(Bundle)]
-pub struct Body {
+pub struct BodyBundle {
     sprite_bundle: SpriteBundle,
     position: Position,
     collider: Collider,
@@ -20,19 +18,24 @@ pub struct Wall;
 
 #[derive(Bundle)]
 pub struct PlayerBundle {
-    pub body: Body,
+    pub body_bundle: BodyBundle,
     pub rigid_body: RigidBody,
+    pub external_force: ExternalForce,
+    //pub gravity: ExternalForce,
+    pub external_torque: ExternalTorque,
+    pub angular_damping: AngularDamping,
+    pub linear_damping: LinearDamping,
     pub _p: Player,
 }
 
 #[derive(Bundle)]
 pub struct WallBundle {
-    pub body: Body,
+    pub body_bundle: BodyBundle,
     pub rigid_body: RigidBody,
     pub _w: Wall,
 }
 
-impl Default for Body {
+impl Default for BodyBundle {
     fn default() -> Self {
         Self {
             sprite_bundle: SpriteBundle {
@@ -45,7 +48,7 @@ impl Default for Body {
     }
 }
 
-impl Body {
+impl BodyBundle {
     pub fn new(size: Vec2, position: Vec2) -> Self {
         Self {
             sprite_bundle: SpriteBundle {
@@ -61,8 +64,13 @@ impl Body {
 impl Default for PlayerBundle {
     fn default() -> Self {
         Self {
-            body: Body::default(),
+            body_bundle: BodyBundle::default(),
             rigid_body: RigidBody::Dynamic,
+            external_force: ExternalForce::new(Vec2::ZERO).with_persistence(false),
+            //gravity: ExternalForce::new(Vec2::X * 600.0),
+            external_torque: ExternalTorque::new(0.0).with_persistence(false),
+            angular_damping: AngularDamping(10.0),
+            linear_damping: LinearDamping(2.0),
             _p: Player,
         }
     }
@@ -71,7 +79,7 @@ impl Default for PlayerBundle {
 impl Default for WallBundle {
     fn default() -> Self {
         Self {
-            body: Body::default(),
+            body_bundle: BodyBundle::default(),
             rigid_body: RigidBody::Static,
             _w: Wall,
         }
