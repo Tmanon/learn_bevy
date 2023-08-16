@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::body_bundles::*;
-use crate::constants::*;
+use crate::game::constants::*;
 
 pub fn spawn_arena(mut commands: Commands) {
     let half_size: Vec2 = Vec2::new(ARENA_SIZE.x * 0.5, ARENA_SIZE.y * 0.5);

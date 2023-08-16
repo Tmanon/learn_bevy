@@ -9,7 +9,6 @@ use camera::CameraPlugin;
 use game::GamePlugin;
 
 pub mod body_bundles;
-pub mod constants;
 
 fn main() {
     App::new()

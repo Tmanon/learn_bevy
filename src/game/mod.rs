@@ -2,9 +2,10 @@ use bevy::prelude::*;
 use bevy_xpbd_2d::prelude::Gravity;
 
 mod arena;
+mod constants;
 mod players;
 
-use crate::constants::*;
+use crate::game::constants::*;
 
 pub struct GamePlugin;
 

@@ -3,7 +3,7 @@ use leafwing_input_manager::prelude::*;
 
 use crate::actions::*;
 use crate::body_bundles::*;
-use crate::constants::*;
+use crate::game::constants::*;
 
 pub fn spawn_players(mut movement_properties: ResMut<MovementProperties>, mut commands: Commands) {
     movement_properties.boost = BOOST;
