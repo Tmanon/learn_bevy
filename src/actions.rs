@@ -13,10 +13,10 @@ impl Plugin for ActionPlugin {
 }
 
 #[derive(Resource)]
-struct MovementProperties {
-    boost: f32,
-    jump: f32,
-    torque: f32,
+pub struct MovementProperties {
+    pub boost: f32,
+    pub jump: f32,
+    pub torque: f32,
 }
 
 impl Default for MovementProperties {

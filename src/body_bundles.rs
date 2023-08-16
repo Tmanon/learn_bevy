@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 use bevy_xpbd_2d::prelude::*;
 
-use crate::constants::*;
-
 #[derive(Bundle)]
 pub struct BodyBundle {
     sprite_bundle: SpriteBundle,
@@ -39,11 +37,11 @@ impl Default for BodyBundle {
     fn default() -> Self {
         Self {
             sprite_bundle: SpriteBundle {
-                transform: Transform::from_scale(Vec3::new(SCALE_FACTOR, SCALE_FACTOR, 1.0)),
+                transform: Transform::from_scale(Vec3::new(10.0, 10.0, 1.0)),
                 ..default()
             },
             position: Default::default(),
-            collider: Collider::cuboid(SCALE_FACTOR, SCALE_FACTOR),
+            collider: Collider::cuboid(10.0, 10.0),
         }
     }
 }
