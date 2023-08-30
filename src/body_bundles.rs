@@ -5,6 +5,46 @@ use leafwing_input_manager::prelude::*;
 
 use crate::actions::{MovementPropertiesResource, PlayerAction};
 
+//So I know how to this manually by copying the code for each button and component bundle, but I wonder how I can reuse the code.
+//This is a pseudo code for what I want to do
+//```
+//#[derive(Bundle)]
+//struct BundleOne{...}
+//...BundleTwo...
+//...BundleThree...
+//
+//impl Default for BundleOne {...}
+//impl Default for BundleTwo {...}
+//impl Default for BundleThree {...}
+//
+//#[derive(BundleList)]
+//enum Bundles {
+//    BundleOne,
+//    BundleTwo,
+//    BundleThree,
+//}
+//
+//fn bundle_buttons(mut commands: Commands) {
+//    for bundle in Bundles::list {
+//        commands.spawn(Button(name: bundle));
+//    }
+//}
+//
+//fn button_system(mut commands: Commands, query: Query<Button>) {
+//    for ( button) in &query{
+//        if button::pressed{
+//            commands.spawn(button::name::default());
+//        }
+//    }
+//}
+//
+//#[derive(Component)]
+//pub enum Bodies {
+//    Body(BodyBundle),
+//    Wall(WallBundle),
+//    Player(PlayerBundle),
+//}
+
 #[derive(Component)]
 pub struct MovementProperties {
     pub boost: f32,
@@ -27,6 +67,7 @@ pub struct Body;
 
 #[derive(Bundle)]
 pub struct BodyBundle {
+    pub rigid_body: RigidBody,
     pub sprite_bundle: SpriteBundle,
     pub position: Position,
     pub collider: Collider,
@@ -36,6 +77,7 @@ pub struct BodyBundle {
 impl Default for BodyBundle {
     fn default() -> Self {
         Self {
+            rigid_body: RigidBody::Dynamic,
             sprite_bundle: SpriteBundle {
                 transform: Transform::from_scale(Vec3::new(10., 10., 0.0)),
                 ..default()
@@ -48,14 +90,26 @@ impl Default for BodyBundle {
 }
 
 impl BodyBundle {
-    pub fn new(size: Option<Vec2>, position: Option<Vec2>) -> Self {
+    pub fn new(
+        rigid_body_type: Option<RigidBody>,
+        size: Option<Vec2>,
+        position: Option<Vec2>,
+    ) -> Self {
         Self {
+            rigid_body: rigid_body_type.unwrap_or_default(),
             sprite_bundle: SpriteBundle {
-                transform: Transform::from_scale(Vec3::new(size.unwrap().x, size.unwrap().y, 1.0)),
+                transform: Transform::from_scale(Vec3::new(
+                    size.unwrap_or(Vec2::splat(10.)).x,
+                    size.unwrap_or(Vec2::splat(10.)).y,
+                    1.0,
+                )),
                 ..default()
             },
             position: Position(position.unwrap_or(BodyBundle::default().position.0)),
-            collider: Collider::cuboid(size.unwrap().x, size.unwrap().y),
+            collider: Collider::cuboid(
+                size.unwrap_or(Vec2::splat(10.)).x,
+                size.unwrap_or(Vec2::splat(10.)).y,
+            ),
             ..default()
         }
     }
@@ -67,7 +121,6 @@ pub struct Player;
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub body_bundle: BodyBundle,
-    pub rigid_body: RigidBody,
     pub external_force: ExternalForce,
     pub external_torque: ExternalTorque,
     pub linear_damping: LinearDamping,
@@ -92,6 +145,7 @@ impl PlayerBundle {
     ) -> Self {
         Self {
             body_bundle: BodyBundle::new(
+                None,
                 Some(size.unwrap_or_else(|| {
                     PlayerBundle::default()
                         .body_bundle
@@ -146,7 +200,6 @@ impl Default for PlayerBundle {
     fn default() -> Self {
         Self {
             body_bundle: BodyBundle::default(),
-            rigid_body: RigidBody::Dynamic,
             external_force: ExternalForce::new(Vec2::ZERO).with_persistence(false),
             external_torque: ExternalTorque::new(0.0).with_persistence(false),
             linear_damping: LinearDamping(
@@ -177,14 +230,13 @@ pub struct Wall;
 #[derive(Bundle)]
 pub struct WallBundle {
     pub body_bundle: BodyBundle,
-    pub rigid_body: RigidBody,
     pub _w: Wall,
 }
 
 impl WallBundle {
     pub fn new(size: Vec2, position: Vec2) -> Self {
         Self {
-            body_bundle: BodyBundle::new(Some(size), Some(position)),
+            body_bundle: BodyBundle::new(Some(RigidBody::Static), Some(size), Some(position)),
             ..default()
         }
     }
@@ -193,8 +245,7 @@ impl WallBundle {
 impl Default for WallBundle {
     fn default() -> Self {
         Self {
-            body_bundle: BodyBundle::default(),
-            rigid_body: RigidBody::Static,
+            body_bundle: BodyBundle::new(Some(RigidBody::Static), None, None),
             _w: Wall,
         }
     }
