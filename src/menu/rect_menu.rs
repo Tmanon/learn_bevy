@@ -28,7 +28,7 @@ pub fn button_system(
         let mut text = text_query.get_mut(children[0]).unwrap();
         match *interaction {
             Interaction::Pressed => {
-                text.sections[0].value = "You Can Realease".to_string();
+                //text.sections[0].value = "You Can Realease".to_string();
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
                 match body_button {
@@ -46,8 +46,13 @@ pub fn button_system(
                 text.sections[0].value = "Press To Spawn".to_string();
                 *color = NORMAL_BUTTON.into();
                 border_color.0 = Color::BLACK;
+                match body_button {
+                    BodyList::Body => text.sections[0].value = "Spawn Ball".to_string(),
+                    BodyList::Player => text.sections[0].value = "Spawn Player".to_string(),
+                    BodyList::Wall => text.sections[0].value = "Spawn Wall".to_string(),
+                };
             }
-        }
+        };
     }
 }
 
@@ -78,31 +83,34 @@ pub enum BodyList {
 pub fn rect_menu_setup(
     mut commands: Commands,
     query_action: Query<&ActionState<MainAction>>,
-    query_menu: Query<Entity, With<MyNode>>,
+    query_menu: Query<Entity, With<Node>>,
 ) {
-    for action_state in &query_action {
-        if action_state.just_pressed(MainAction::BuildMenu) {
-            if !query_menu.is_empty() {
-                commands.entity(query_menu.single()).despawn_recursive();
-            } else {
-                commands.spawn(MyNode::default().0).with_children(|parent| {
-                    parent
-                        .spawn((BodyList::Body, MyButton::default().0))
-                        .with_children(|parent| {
-                            parent.spawn(MyText::default().0);
-                        });
-                    parent
-                        .spawn((BodyList::Player, MyButton::default().0))
-                        .with_children(|parent| {
-                            parent.spawn(MyText::default().0);
-                        });
-                    parent
-                        .spawn((BodyList::Wall, MyButton::default().0))
-                        .with_children(|parent| {
-                            parent.spawn(MyText::default().0);
-                        });
-                });
+    let action_state = &query_action.single();
+    //for action_state in &query_action {
+    if action_state.just_pressed(MainAction::BuildMenu) {
+        if !query_menu.is_empty() {
+            for menu_entity in query_menu.iter() {
+                commands.entity(menu_entity).despawn_recursive();
             }
+        } else {
+            commands.spawn(MyNode::default().0).with_children(|parent| {
+                parent
+                    .spawn((BodyList::Body, MyButton::default().0))
+                    .with_children(|parent| {
+                        parent.spawn(MyText::default().0);
+                    });
+                parent
+                    .spawn((BodyList::Player, MyButton::default().0))
+                    .with_children(|parent| {
+                        parent.spawn(MyText::default().0);
+                    });
+                parent
+                    .spawn((BodyList::Wall, MyButton::default().0))
+                    .with_children(|parent| {
+                        parent.spawn(MyText::default().0);
+                    });
+            });
         }
     }
+    //}
 }

@@ -5,6 +5,7 @@ mod arena;
 mod constants;
 mod game;
 mod players;
+mod show_keybindings;
 
 use crate::game::constants::*;
 
@@ -15,6 +16,7 @@ impl Plugin for GamePlugin {
         app.insert_resource(Gravity(Vec2::NEG_Y * GRAVITY))
             .add_systems(Startup, game::game)
             .add_systems(Startup, arena::spawn_arena)
+            .add_systems(Startup, show_keybindings::show_keybindings_system)
             .add_systems(Startup, players::players);
     }
 }

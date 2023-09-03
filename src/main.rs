@@ -1,4 +1,4 @@
-use bevy::{prelude::*, window::WindowMode::*};
+use bevy::{prelude::*, window::WindowMode::*, window::WindowResolution};
 use bevy_xpbd_2d::prelude::*;
 
 pub mod actions;
@@ -17,7 +17,10 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
+                    resolution: WindowResolution::default().with_scale_factor_override(1.),
+                    resizable: true,
                     mode: BorderlessFullscreen,
+                    fit_canvas_to_parent: true,
                     ..default()
                 }),
                 ..default()
