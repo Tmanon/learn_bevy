@@ -5,6 +5,7 @@ pub mod actions;
 pub mod camera;
 pub mod game;
 pub mod menu;
+pub mod states;
 use actions::ActionPlugin;
 use camera::CameraPlugin;
 use game::GamePlugin;
