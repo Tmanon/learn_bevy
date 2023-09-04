@@ -9,6 +9,9 @@ impl Plugin for CameraPlugin {
     }
 }
 
+#[derive(Component)]
+pub struct MainCamera;
+
 fn spawn_camera(mut commands: Commands) {
     let mut camera = Camera2dBundle::default();
 
@@ -17,5 +20,5 @@ fn spawn_camera(mut commands: Commands) {
         height: 1080.0,
     };
 
-    commands.spawn(camera);
+    commands.spawn((camera, MainCamera));
 }
