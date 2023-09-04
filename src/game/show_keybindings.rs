@@ -15,8 +15,8 @@ pub fn show_keybindings_system(
     };
 
     commands.spawn(Text2dBundle {
-        text: Text::from_section("Keys: B, UP, LEFT, RIGHT", text_style),
-        transform: Transform::from_xyz(ARENA_SIZE.x / 2. - 400., ARENA_SIZE.x / 2. - 400., 1.),
+        text: Text::from_section("Keys: B, Space, UP, LEFT, RIGHT", text_style),
+        transform: Transform::from_xyz(ARENA_SIZE.x / 2. - 500., ARENA_SIZE.x / 2. - 400., 1.),
         ..default()
     });
 }
