@@ -4,12 +4,14 @@ use bevy_xpbd_2d::prelude::*;
 pub mod actions;
 pub mod camera;
 pub mod game;
-pub mod menu;
+pub mod level_editor;
 pub mod states;
+
 use actions::ActionPlugin;
 use camera::CameraPlugin;
 use game::GamePlugin;
-use menu::MenuPlugin;
+use level_editor::LevelEditorPlugin;
+use states::AppState;
 
 pub mod body_bundles;
 
@@ -30,8 +32,9 @@ fn main() {
             ActionPlugin,
             CameraPlugin,
             GamePlugin,
-            MenuPlugin,
+            LevelEditorPlugin,
         ))
+        .add_state::<AppState>()
         .add_systems(Update, bevy::window::close_on_esc)
         .run();
 }

@@ -4,9 +4,9 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_xpbd_2d::prelude::*;
 
 use crate::camera::MainCamera;
-use crate::menu::rect_menu::BodyList;
+use crate::level_editor::rect_menu::BodyList;
 
-pub fn mouse_system(
+pub fn place_bodies(
     mut query: Query<&mut Position, With<BodyList>>,
     windows: Query<&Window, With<PrimaryWindow>>,
     camera_q: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
