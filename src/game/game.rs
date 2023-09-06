@@ -24,7 +24,7 @@ pub fn in_game(
 ) {
     let action_state = &query_action.single();
     if action_state.just_pressed(MainAction::BuildMenu) {
-        println!("presed b");
+        println!("presed b in game");
         next_state.set(AppState::MainMenu);
     }
 }

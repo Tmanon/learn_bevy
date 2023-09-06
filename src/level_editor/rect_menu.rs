@@ -1,12 +1,25 @@
-use bevy::prelude::*;
-
+use crate::actions::MainAction;
 use crate::body_bundles::*;
 use crate::level_editor::menu_bundles::*;
 use crate::states::AppState;
 
+use bevy::prelude::*;
+use leafwing_input_manager::action_state::ActionState;
+
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
+
+pub fn menu_system(
+    mut next_state: ResMut<NextState<AppState>>,
+    query_action: Query<&ActionState<MainAction>>,
+) {
+    let action_state = &query_action.single();
+    if action_state.just_pressed(MainAction::BuildMenu) {
+        println!("presed b in menu");
+        next_state.set(AppState::InGame);
+    }
+}
 
 pub fn button_system(
     mut commands: Commands,
@@ -120,4 +133,10 @@ pub fn rect_menu_setup(mut commands: Commands) {
                 parent.spawn(MyText::default().0);
             });
     });
+}
+
+pub fn rect_menu_despawn(mut commands: Commands, menu_query: Query<Entity, With<MyNode>>) {
+    for entity in menu_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
 }
