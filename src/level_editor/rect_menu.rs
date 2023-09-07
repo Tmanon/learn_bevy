@@ -135,8 +135,8 @@ pub fn rect_menu_setup(mut commands: Commands) {
     });
 }
 
-pub fn rect_menu_despawn(mut commands: Commands, menu_query: Query<Entity, With<MyNode>>) {
+pub fn rect_menu_despawn(mut commands: Commands, menu_query: Query<Entity, With<Node>>) {
     for entity in menu_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

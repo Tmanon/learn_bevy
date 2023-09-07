@@ -1,5 +1,5 @@
 [package]
-name = "earn_sandbox_proto"
+name = "learn_sandbox_proto"
 version = "0.1.0"
 edition = "2021"
 default-run = "learn_sandbox_proto"
