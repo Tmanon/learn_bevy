@@ -8,6 +8,7 @@ pub fn players(
     movement_properties_resource: Res<MovementPropertiesResource>,
 ) {
     commands.spawn(PlayerBundle::new(
+        None,
         Some(Vec2::new(60., 80.)),
         //Some(Vec2::ZERO),
         None,

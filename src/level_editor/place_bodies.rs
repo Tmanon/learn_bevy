@@ -2,14 +2,19 @@ use bevy::render::camera::RenderTarget;
 use bevy::window::WindowRef;
 use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_xpbd_2d::prelude::*;
+use leafwing_input_manager::prelude::ActionState;
 
+use crate::actions::MainAction;
+use crate::body_bundles::Editing;
 use crate::camera::MainCamera;
-use crate::level_editor::rect_menu::BodyList;
+use crate::states::AppState;
 
 pub fn place_bodies(
-    mut query: Query<&mut Position, With<BodyList>>,
+    mut query: Query<(&mut Position, &Editing)>,
     windows: Query<&Window, With<PrimaryWindow>>,
     camera_q: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
+    mut next_state: ResMut<NextState<AppState>>,
+    actions_query: Query<&ActionState<MainAction>>,
 ) {
     let (camera, camera_transform) = camera_q.single();
     let window = if let RenderTarget::Window(WindowRef::Entity(entity)) = camera.target {
@@ -21,14 +26,19 @@ pub fn place_bodies(
         .cursor_position()
         .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
         .map(|ray| ray.origin.truncate());
-    //{
-    //    eprintln!("World coords: {}/{}", world_position.x, world_position.y);
-    //}
+    for (mut position, editing) in &mut query {
+        if editing.0 {
+            position.0 = world_position.unwrap_or_default();
+        }
+    }
 
-    //let cursor = windows.single().cursor_position().unwrap_or_default();
-    for mut position in &mut query {
-        position.0 = world_position.unwrap_or_default();
-        //position.0 = cursor.copysign(Vec2::NEG_Y) + (Vec2::Y * 500.);
-        //position.0 = cursor;
+    if actions_query.single().released(MainAction::LeftClick) {
+        next_state.set(AppState::LevelEditor);
+    }
+}
+
+pub fn place_bodies_exit(mut query: Query<&mut Editing>) {
+    for mut editing in &mut query {
+        *editing = Editing(false);
     }
 }

@@ -12,11 +12,13 @@ pub struct LevelEditorPlugin;
 
 impl Plugin for LevelEditorPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::MainMenu), rect_menu_setup)
-            .add_systems(OnExit(AppState::MainMenu), rect_menu_despawn)
+        app.add_systems(OnEnter(AppState::LevelEditor), rect_menu_setup)
+            .add_systems(OnExit(AppState::LevelEditor), rect_menu_despawn)
             .add_systems(
                 Update,
-                (menu_system, button_system, place_bodies).run_if(in_state(AppState::MainMenu)),
-            );
+                (menu_system, button_system).run_if(in_state(AppState::LevelEditor)),
+            )
+            .add_systems(Update, place_bodies.run_if(in_state(AppState::PlaceBodies)))
+            .add_systems(OnExit(AppState::PlaceBodies), place_bodies_exit);
     }
 }

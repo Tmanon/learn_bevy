@@ -5,46 +5,6 @@ use leafwing_input_manager::prelude::*;
 
 use crate::actions::{MovementPropertiesResource, PlayerAction};
 
-//So I know how to this manually by copying the code for each button and component bundle, but I wonder how I can reuse the code.
-//This is a pseudo code for what I want to do
-//```
-//#[derive(Bundle)]
-//struct BundleOne{...}
-//...BundleTwo...
-//...BundleThree...
-//
-//impl Default for BundleOne {...}
-//impl Default for BundleTwo {...}
-//impl Default for BundleThree {...}
-//
-//#[derive(BundleList)]
-//enum Bundles {
-//    BundleOne,
-//    BundleTwo,
-//    BundleThree,
-//}
-//
-//fn bundle_buttons(mut commands: Commands) {
-//    for bundle in Bundles::list {
-//        commands.spawn(Button(name: bundle));
-//    }
-//}
-//
-//fn button_system(mut commands: Commands, query: Query<Button>) {
-//    for ( button) in &query{
-//        if button::pressed{
-//            commands.spawn(button::name::default());
-//        }
-//    }
-//}
-//
-//#[derive(Component)]
-//pub enum Bodies {
-//    Body(BodyBundle),
-//    Wall(WallBundle),
-//    Player(PlayerBundle),
-//}
-
 #[derive(Component)]
 pub struct MovementProperties {
     pub boost: f32,
@@ -65,8 +25,12 @@ impl Default for MovementProperties {
 #[derive(Component)]
 pub struct Body;
 
+#[derive(Component)]
+pub struct Editing(pub bool);
+
 #[derive(Bundle)]
 pub struct BodyBundle {
+    pub editing: Editing,
     pub rigid_body: RigidBody,
     pub sprite_bundle: SpriteBundle,
     pub position: Position,
@@ -77,6 +41,7 @@ pub struct BodyBundle {
 impl Default for BodyBundle {
     fn default() -> Self {
         Self {
+            editing: Editing(false),
             rigid_body: RigidBody::Dynamic,
             sprite_bundle: SpriteBundle {
                 transform: Transform::from_scale(Vec3::new(10., 10., 0.0)),
@@ -91,11 +56,13 @@ impl Default for BodyBundle {
 
 impl BodyBundle {
     pub fn new(
+        editing: Option<bool>,
         rigid_body_type: Option<RigidBody>,
         size: Option<Vec2>,
         position: Option<Vec2>,
     ) -> Self {
         Self {
+            editing: Editing(editing.unwrap_or_default()),
             rigid_body: rigid_body_type.unwrap_or_default(),
             sprite_bundle: SpriteBundle {
                 transform: Transform::from_scale(Vec3::new(
@@ -132,6 +99,7 @@ pub struct PlayerBundle {
 
 impl PlayerBundle {
     pub fn new(
+        editing: Option<bool>,
         size: Option<Vec2>,
         position: Option<Vec2>,
         movement_properties_resource: Option<Res<MovementPropertiesResource>>,
@@ -145,6 +113,7 @@ impl PlayerBundle {
     ) -> Self {
         Self {
             body_bundle: BodyBundle::new(
+                editing,
                 None,
                 Some(size.unwrap_or_else(|| {
                     PlayerBundle::default()
@@ -234,9 +203,9 @@ pub struct WallBundle {
 }
 
 impl WallBundle {
-    pub fn new(size: Vec2, position: Vec2) -> Self {
+    pub fn new(editing: Option<bool>, size: Option<Vec2>, position: Option<Vec2>) -> Self {
         Self {
-            body_bundle: BodyBundle::new(Some(RigidBody::Static), Some(size), Some(position)),
+            body_bundle: BodyBundle::new(editing, Some(RigidBody::Static), size, position),
             ..default()
         }
     }
@@ -245,7 +214,7 @@ impl WallBundle {
 impl Default for WallBundle {
     fn default() -> Self {
         Self {
-            body_bundle: BodyBundle::new(Some(RigidBody::Static), None, None),
+            body_bundle: BodyBundle::new(None, Some(RigidBody::Static), None, None),
             _w: Wall,
         }
     }

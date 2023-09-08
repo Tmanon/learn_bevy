@@ -4,6 +4,7 @@ use crate::level_editor::menu_bundles::*;
 use crate::states::AppState;
 
 use bevy::prelude::*;
+use bevy_xpbd_2d::plugins::setup::PhysicsLoop;
 use leafwing_input_manager::action_state::ActionState;
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
@@ -16,7 +17,6 @@ pub fn menu_system(
 ) {
     let action_state = &query_action.single();
     if action_state.just_pressed(MainAction::BuildMenu) {
-        println!("presed b in menu");
         next_state.set(AppState::InGame);
     }
 }
@@ -45,13 +45,28 @@ pub fn button_system(
                 border_color.0 = Color::RED;
                 match button {
                     ButtonList::SpawnBody => {
-                        commands.spawn((BodyList::Body, BodyBundle::default()));
+                        commands.spawn(BodyBundle::new(Some(true), None, None, None));
+                        next_state.set(AppState::PlaceBodies);
                     }
                     ButtonList::SpawnPlayer => {
-                        commands.spawn((BodyList::Player, PlayerBundle::default()));
+                        commands.spawn(PlayerBundle::new(
+                            Some(true),
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                        ));
+                        next_state.set(AppState::PlaceBodies);
                     }
                     ButtonList::SpawnWall => {
-                        commands.spawn((BodyList::Wall, WallBundle::default()));
+                        commands.spawn(WallBundle::new(Some(true), None, None));
+                        next_state.set(AppState::PlaceBodies);
                     }
                     ButtonList::Play => {
                         next_state.set(AppState::InGame);
@@ -78,30 +93,6 @@ pub fn button_system(
     }
 }
 
-//pub enum Bodies {
-//    Body(BodyBundle),
-//    Player(PlayerBundle),
-//    Wall(WallBundle),
-//}
-//
-//impl Bodies {
-//    fn vector() -> Vec<Bodies> {
-//        let bodies_enum: Vec<Bodies> = vec![
-//            Bodies::Body(BodyBundle::default()),
-//            Bodies::Player(PlayerBundle::default()),
-//            Bodies::Wall(WallBundle::default()),
-//        ];
-//        bodies_enum
-//    }
-//}
-
-#[derive(Component)]
-pub enum BodyList {
-    Body,
-    Player,
-    Wall,
-}
-
 #[derive(Component)]
 pub enum ButtonList {
     SpawnBody,
@@ -110,7 +101,8 @@ pub enum ButtonList {
     Play,
 }
 
-pub fn rect_menu_setup(mut commands: Commands) {
+pub fn rect_menu_setup(mut commands: Commands, mut resource_physics_loop: ResMut<PhysicsLoop>) {
+    resource_physics_loop.paused = true;
     commands.spawn(MyNode::default().0).with_children(|parent| {
         parent
             .spawn((ButtonList::SpawnBody, MyButton::default().0))

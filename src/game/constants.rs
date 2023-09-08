@@ -1,6 +1,6 @@
 use bevy::math::Vec2;
 
-pub const ARENA_SIZE: Vec2 = Vec2::new(1920.0 * 0.8, 1080.0 * 0.8);
+pub const ARENA_SIZE: Vec2 = Vec2::new(1920.0, 1080.0);
 pub const ARENA_WALL: f32 = 20.0;
 
 pub const SCALE_FACTOR: f32 = 100.;

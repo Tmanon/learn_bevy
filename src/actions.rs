@@ -35,6 +35,7 @@ impl Default for MovementPropertiesResource {
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
 pub enum MainAction {
     BuildMenu,
+    LeftClick,
 }
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
@@ -66,11 +67,6 @@ fn movement_system(
             rotation,
         ) in &mut physics_query
         {
-            //println!("Mass: {}", collider_mass_properties.mass.0);
-            //println!(
-            //    "Boost: {}",
-            //    movement_properties.boost * collider_mass_properties.mass.0
-            //);
             if action_state.pressed(PlayerAction::Boost) {
                 external_force.x =
                     rotation.cos() * movement_properties.boost * collider_mass_properties.mass.0;

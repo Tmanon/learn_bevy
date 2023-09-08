@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 
-#[derive(Debug, Clone, Default, Eq, PartialEq, Hash, States)]
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum AppState {
     #[default]
     InGame,
-    MainMenu,
+    LevelEditor,
+    PlaceBodies,
     Paused,
 }

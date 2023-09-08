@@ -10,6 +10,8 @@ mod show_keybindings;
 use crate::game::constants::*;
 use crate::states::AppState;
 
+use self::game::state_enter_in_game;
+
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -24,6 +26,7 @@ impl Plugin for GamePlugin {
             ),
         )
         .insert_resource(Gravity(Vec2::NEG_Y * GRAVITY))
+        .add_systems(OnEnter(AppState::InGame), state_enter_in_game)
         .add_systems(Update, game::in_game.run_if(in_state(AppState::InGame)));
     }
 }
