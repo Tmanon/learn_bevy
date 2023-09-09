@@ -22,6 +22,14 @@ impl Default for MovementProperties {
     }
 }
 
+#[derive(Component, Default, Debug)]
+pub enum BodyType {
+    #[default]
+    Body,
+    Player,
+    Wall,
+}
+
 #[derive(Component)]
 pub struct Body;
 
@@ -31,25 +39,29 @@ pub struct Editing(pub bool);
 #[derive(Bundle)]
 pub struct BodyBundle {
     pub editing: Editing,
+    pub body_type: BodyType,
     pub rigid_body: RigidBody,
     pub sprite_bundle: SpriteBundle,
     pub position: Position,
     pub collider: Collider,
-    pub _b: Body,
 }
 
 impl Default for BodyBundle {
     fn default() -> Self {
         Self {
             editing: Editing(false),
+            body_type: BodyType::Body,
             rigid_body: RigidBody::Dynamic,
             sprite_bundle: SpriteBundle {
                 transform: Transform::from_scale(Vec3::new(10., 10., 0.0)),
+                sprite: Sprite {
+                    color: Color::ORANGE,
+                    ..default()
+                },
                 ..default()
             },
             position: Default::default(),
             collider: Collider::cuboid(10., 10.),
-            _b: Body,
         }
     }
 }
@@ -57,12 +69,15 @@ impl Default for BodyBundle {
 impl BodyBundle {
     pub fn new(
         editing: Option<bool>,
+        body_type: Option<BodyType>,
         rigid_body_type: Option<RigidBody>,
         size: Option<Vec2>,
         position: Option<Vec2>,
+        color: Option<Color>,
     ) -> Self {
         Self {
             editing: Editing(editing.unwrap_or_default()),
+            body_type: body_type.unwrap_or(BodyType::Body),
             rigid_body: rigid_body_type.unwrap_or_default(),
             sprite_bundle: SpriteBundle {
                 transform: Transform::from_scale(Vec3::new(
@@ -70,6 +85,10 @@ impl BodyBundle {
                     size.unwrap_or(Vec2::splat(10.)).y,
                     1.0,
                 )),
+                sprite: Sprite {
+                    color: color.unwrap_or(Color::ORANGE),
+                    ..default()
+                },
                 ..default()
             },
             position: Position(position.unwrap_or(BodyBundle::default().position.0)),
@@ -94,7 +113,6 @@ pub struct PlayerBundle {
     pub angular_damping: AngularDamping,
     pub movement_properties: MovementProperties,
     pub input_manager_bundle: InputManagerBundle<PlayerAction>,
-    pub _p: Player,
 }
 
 impl PlayerBundle {
@@ -102,6 +120,7 @@ impl PlayerBundle {
         editing: Option<bool>,
         size: Option<Vec2>,
         position: Option<Vec2>,
+        color: Option<Color>,
         movement_properties_resource: Option<Res<MovementPropertiesResource>>,
         boost: Option<f32>,
         jump: Option<f32>,
@@ -114,7 +133,8 @@ impl PlayerBundle {
         Self {
             body_bundle: BodyBundle::new(
                 editing,
-                None,
+                Some(BodyType::Player),
+                Some(RigidBody::Dynamic),
                 Some(size.unwrap_or_else(|| {
                     PlayerBundle::default()
                         .body_bundle
@@ -124,6 +144,7 @@ impl PlayerBundle {
                         .truncate()
                 })),
                 Some(position.unwrap_or_else(|| PlayerBundle::default().body_bundle.position.0)),
+                Some(color.unwrap_or(Color::PINK)),
             ),
             movement_properties: MovementProperties {
                 boost: boost.unwrap_or(match &movement_properties_resource {
@@ -168,7 +189,14 @@ impl PlayerBundle {
 impl Default for PlayerBundle {
     fn default() -> Self {
         Self {
-            body_bundle: BodyBundle::default(),
+            body_bundle: BodyBundle::new(
+                None,
+                Some(BodyType::Player),
+                Some(RigidBody::Dynamic),
+                None,
+                None,
+                Some(Color::PINK),
+            ),
             external_force: ExternalForce::new(Vec2::ZERO).with_persistence(false),
             external_torque: ExternalTorque::new(0.0).with_persistence(false),
             linear_damping: LinearDamping(
@@ -188,24 +216,31 @@ impl Default for PlayerBundle {
                 action_state: ActionState::default(),
                 input_map: InputMap::default(),
             },
-            _p: Player,
         }
     }
 }
 
-#[derive(Component)]
-pub struct Wall;
-
 #[derive(Bundle)]
 pub struct WallBundle {
     pub body_bundle: BodyBundle,
-    pub _w: Wall,
 }
 
 impl WallBundle {
-    pub fn new(editing: Option<bool>, size: Option<Vec2>, position: Option<Vec2>) -> Self {
+    pub fn new(
+        editing: Option<bool>,
+        size: Option<Vec2>,
+        position: Option<Vec2>,
+        color: Option<Color>,
+    ) -> Self {
         Self {
-            body_bundle: BodyBundle::new(editing, Some(RigidBody::Static), size, position),
+            body_bundle: BodyBundle::new(
+                editing,
+                Some(BodyType::Wall),
+                Some(RigidBody::Static),
+                size,
+                position,
+                Some(color.unwrap_or(Color::WHITE)),
+            ),
             ..default()
         }
     }
@@ -214,8 +249,14 @@ impl WallBundle {
 impl Default for WallBundle {
     fn default() -> Self {
         Self {
-            body_bundle: BodyBundle::new(None, Some(RigidBody::Static), None, None),
-            _w: Wall,
+            body_bundle: BodyBundle::new(
+                None,
+                Some(BodyType::Wall),
+                Some(RigidBody::Static),
+                None,
+                None,
+                Some(Color::WHITE),
+            ),
         }
     }
 }

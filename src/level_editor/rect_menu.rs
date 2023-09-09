@@ -45,7 +45,7 @@ pub fn button_system(
                 border_color.0 = Color::RED;
                 match button {
                     ButtonList::SpawnBody => {
-                        commands.spawn(BodyBundle::new(Some(true), None, None, None));
+                        commands.spawn(BodyBundle::new(Some(true), None, None, None, None, None));
                         next_state.set(AppState::PlaceBodies);
                     }
                     ButtonList::SpawnPlayer => {
@@ -61,11 +61,12 @@ pub fn button_system(
                             None,
                             None,
                             None,
+                            None,
                         ));
                         next_state.set(AppState::PlaceBodies);
                     }
                     ButtonList::SpawnWall => {
-                        commands.spawn(WallBundle::new(Some(true), None, None));
+                        commands.spawn(WallBundle::new(Some(true), None, None, None));
                         next_state.set(AppState::PlaceBodies);
                     }
                     ButtonList::Play => {

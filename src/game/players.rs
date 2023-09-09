@@ -12,6 +12,7 @@ pub fn players(
         Some(Vec2::new(60., 80.)),
         //Some(Vec2::ZERO),
         None,
+        None,
         Some(movement_properties_resource),
         None,
         None,

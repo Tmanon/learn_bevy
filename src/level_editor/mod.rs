@@ -19,6 +19,10 @@ impl Plugin for LevelEditorPlugin {
                 (menu_system, button_system).run_if(in_state(AppState::LevelEditor)),
             )
             .add_systems(Update, place_bodies.run_if(in_state(AppState::PlaceBodies)))
-            .add_systems(OnExit(AppState::PlaceBodies), place_bodies_exit);
+            .add_systems(OnExit(AppState::PlaceBodies), place_bodies_exit)
+            .insert_resource(PlaceBodiesReleasedOnce(false));
     }
 }
+
+#[derive(Resource)]
+pub struct PlaceBodiesReleasedOnce(bool);
