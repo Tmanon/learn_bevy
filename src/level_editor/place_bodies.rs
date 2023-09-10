@@ -37,12 +37,9 @@ pub fn place_bodies(
 
     if actions_query.single().just_released(MainAction::LeftClick) {
         if released_once.0 {
-            println!("released_once = true");
-            for (entity, body_type, _position, mut editing) in &mut query {
+            for (_entity, body_type, _position, mut editing) in &mut query {
                 if editing.0 {
-                    println!("entity {:#?} is type {:#?}", entity, body_type);
                     *editing = Editing(false);
-                    println!("set editing false for entity id: {:#?}", entity);
                     match body_type {
                         BodyType::Body => {
                             commands.spawn(BodyBundle::new(

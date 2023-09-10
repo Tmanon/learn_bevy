@@ -15,7 +15,8 @@ impl Plugin for ActionPlugin {
     }
 }
 
-#[derive(Resource)]
+#[derive(Resource, Reflect, Debug)]
+#[reflect(Resource)]
 pub struct MovementPropertiesResource {
     pub boost: f32,
     pub jump: f32,

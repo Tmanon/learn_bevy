@@ -22,7 +22,10 @@ impl Default for MovementProperties {
     }
 }
 
-#[derive(Component, Default, Debug)]
+//#[derive(Component, Reflect, Default, Debug)]
+//#[reflect(Component)]
+#[derive(Component, Reflect, Default, Debug)]
+#[reflect(Component)]
 pub enum BodyType {
     #[default]
     Body,
@@ -30,6 +33,8 @@ pub enum BodyType {
     Wall,
 }
 
+//#[derive(Component, Reflect)]
+//#[reflect(Component)]
 #[derive(Component)]
 pub struct Body;
 
