@@ -69,9 +69,9 @@ fn movement_system(
         {
             if action_state.pressed(PlayerAction::Boost) {
                 external_force.x =
-                    rotation.cos() * movement_properties.boost * collider_mass_properties.mass.0;
+                    rotation.cos() * movement_properties.boost * collider_mass_properties.mass();
                 external_force.y =
-                    rotation.sin() * movement_properties.boost * collider_mass_properties.mass.0;
+                    rotation.sin() * movement_properties.boost * collider_mass_properties.mass();
             }
             if action_state.just_pressed(PlayerAction::Jump) {
                 linear_velocity.x += rotation.cos() * movement_properties.jump;
@@ -79,11 +79,11 @@ fn movement_system(
             }
             if action_state.pressed(PlayerAction::RotateLeft) {
                 external_torque
-                    .apply_torque(movement_properties.torque * collider_mass_properties.inertia.0);
+                    .apply_torque(movement_properties.torque * collider_mass_properties.inertia());
             }
             if action_state.pressed(PlayerAction::RotateRight) {
                 external_torque
-                    .apply_torque(-movement_properties.torque * collider_mass_properties.inertia.0);
+                    .apply_torque(-movement_properties.torque * collider_mass_properties.inertia());
             }
         }
     }

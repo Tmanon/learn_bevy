@@ -200,16 +200,10 @@ impl Default for PlayerBundle {
             external_force: ExternalForce::new(Vec2::ZERO).with_persistence(false),
             external_torque: ExternalTorque::new(0.0).with_persistence(false),
             linear_damping: LinearDamping(
-                0.020
-                    * ColliderMassProperties::new_computed(&BodyBundle::default().collider, 1.)
-                        .mass
-                        .0,
+                0.020 * ColliderMassProperties::new(&BodyBundle::default().collider, 1.).mass(),
             ),
             angular_damping: AngularDamping(
-                0.016
-                    * ColliderMassProperties::new_computed(&BodyBundle::default().collider, 1.)
-                        .inertia
-                        .0,
+                0.016 * ColliderMassProperties::new(&BodyBundle::default().collider, 1.).inertia(),
             ),
             movement_properties: MovementProperties::default(),
             input_manager_bundle: InputManagerBundle::<PlayerAction> {

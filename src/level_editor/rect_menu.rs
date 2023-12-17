@@ -4,7 +4,7 @@ use crate::level_editor::menu_bundles::*;
 use crate::states::AppState;
 
 use bevy::prelude::*;
-use bevy_xpbd_2d::plugins::setup::PhysicsLoop;
+use bevy_xpbd_2d::prelude::*;
 use leafwing_input_manager::action_state::ActionState;
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
@@ -102,8 +102,8 @@ pub enum ButtonList {
     Play,
 }
 
-pub fn rect_menu_setup(mut commands: Commands, mut resource_physics_loop: ResMut<PhysicsLoop>) {
-    resource_physics_loop.paused = true;
+pub fn rect_menu_setup(mut commands: Commands, mut time: ResMut<Time<Physics>>) {
+    time.pause();
     commands.spawn(MyNode::default().0).with_children(|parent| {
         parent
             .spawn((ButtonList::SpawnBody, MyButton::default().0))

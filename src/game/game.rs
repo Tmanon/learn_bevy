@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_xpbd_2d::plugins::setup::PhysicsLoop;
+use bevy_xpbd_2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::user_input::InputKind;
 
@@ -23,8 +23,8 @@ pub fn game_setup(
     movement_properties_resource.torque = TORQUE;
 }
 
-pub fn state_enter_in_game(mut resource_physics_loop: ResMut<PhysicsLoop>) {
-    resource_physics_loop.paused = false;
+pub fn state_enter_in_game(mut time: ResMut<Time<Physics>>) {
+    time.unpause();
 }
 
 pub fn in_game(

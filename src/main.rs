@@ -29,6 +29,7 @@ fn main() {
                 ..default()
             }),
             PhysicsPlugins::default(),
+            PhysicsDebugPlugin::default(),
             ActionPlugin,
             CameraPlugin,
             GamePlugin,
